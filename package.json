@@ -14,20 +14,12 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "cordova-android": "^10.1.2",
-<<<<<<< HEAD
-    "cordova-ios": "^6.2.0"
-=======
     "cordova-electron": "^3.1.0"
->>>>>>> 0e96442f14b90aa1ea03f50af69d527c24aa05af
   },
   "cordova": {
     "platforms": [
       "android",
-<<<<<<< HEAD
-      "ios"
-=======
       "electron"
->>>>>>> 0e96442f14b90aa1ea03f50af69d527c24aa05af
     ]
   }
 }
