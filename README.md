@@ -32,7 +32,7 @@ You may not need all of these, you may only need two specific packages - one fro
 
 TODO: remove suspected unnecessary packages from the windows platform and stop when it doesn't work. Identify from the big windows list what is *actually* needed.
 
-You should then be able to run `cordova add android`, `cordova build android`, and then `cordova run android`. You will need an android device connected with debugging authorisation in order to use the `run` command, or you can set up an emulator with Android Studio. Getting an emulator set up with Android Studio is not complicated and there are many thorough guides for it. Make sure the emulator is running and then us `cordova run android --emulator` to use it. 
+You should then be able to run `cordova add android`, `cordova build android`, and then `cordova run android`. You will need an android device connected with debugging authorisation in order to use the `run` command, or you can set up an emulator with Android Studio. Getting an emulator set up with Android Studio is not complicated and there are many thorough guides for it. Make sure the emulator is running and then us `cordova run android --emulator` to use it.
 
 There may be some permission errors on Linux. Error codes are fairly self-descriptive but searching for the `plugdev` and the `udev` keywords should yeild some answers. You may need to log out/reboot.
 
