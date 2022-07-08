@@ -6,8 +6,22 @@ function onDeviceReady() {
     // Cordova is now initialized. Have fun!
 
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
+    navigator.geolocation.watchPosition(checkPos);
 
+}
 
+function checkPos(pos) {
+    const crd = pos.coords;
+
+    var target = {
+        "latitude": 52.916451,
+        "longitude": 1.461599
+    }
+    var radius = 0.0005 // around 20 metres or so in the uk
+
+    if (target.latitude == crd.latitude && target.longitude == crd.longitude) {
+
+    }
 }
 
 function notificationDismissed() {
@@ -92,4 +106,6 @@ window.addEventListener('message', e => {
     }
 
 });
+
+
 
