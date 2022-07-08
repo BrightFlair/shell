@@ -14,14 +14,22 @@ function checkPos(pos) {
     const crd = pos.coords;
 
     var target = {
-        "latitude": 52.916451,
-        "longitude": 1.461599
+        "latitude": 52.916451, // roundhouse
+        "longitude": -1.461599
     }
-    var radius = 0.0005 // around 20 metres or so in the uk
+    var radius = 0.0005 // 0.0005 around 20 metres or so in the uk
 
-    if (target.latitude == crd.latitude && target.longitude == crd.longitude) {
+    var distance = getEuclidDistance(crd, target);
 
-    }
+    setRoundHouse(distance <= radius);
+}
+
+function getEuclidDistance(current, target) {
+    let lat_distance  = Math.abs(current.latitude - target.latitude);
+    let long_distance = Math.abs(current.longitude - target.longitude);
+    let sqr_distance = Math.pow(lat_distance, 2) + Math.pow(long_distance, 2)
+    let distance = Math.sqrt(sqr_distance);
+    return distance;
 }
 
 function notificationDismissed() {
