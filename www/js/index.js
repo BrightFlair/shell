@@ -6,7 +6,7 @@ function onDeviceReady() {
     // Cordova is now initialized. Have fun!
 
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
-    
+
 
 }
 
@@ -14,6 +14,16 @@ function notificationDismissed() {
     // nothing yet
 }
 
+
+function setRoundHouse(areWeThere) {
+    let form = document.querySelector("body>form");
+    if(areWeThere) {
+        form.classList.add("fenced");
+    }
+    else {
+        form.classList.remove("fenced");
+    }
+}
 
 
 document.getElementById("debug1").addEventListener("click", function() {
@@ -80,6 +90,6 @@ window.addEventListener('message', e => {
             navigator.geolocation.getCurrentPosition(PositionSuccess, PositionError, {timeout: 5000});
         }
     }
-    
+
 });
 

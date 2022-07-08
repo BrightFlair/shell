@@ -36,6 +36,11 @@ form {
 	left: 0;
 	right: 0;
 	height: 2rem;
+	padding-top: 1rem;
+	background: red;
+}
+form.fenced {
+	background: green;
 }
 button {
 	flex-grow: 1;
