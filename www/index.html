@@ -10,7 +10,7 @@
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: https://pwa.g105b.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: http://localhost:8080 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
         <meta name="format-detection" content="telephone=no" />
         <meta name="msapplication-tap-highlight" content="no" />
         <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover" />
@@ -20,7 +20,7 @@
     </head>
     <body>
         <!-- <iframe src="https://pwa.g105b.com?shell"></iframe> -->
-        <iframe id="mainpage" src="message_page.html"></iframe>
+        <iframe id="mainpage" src="http://localhost:8080"></iframe>
         <form>
             <button type="button" id="debug1">Debug 1</button>
             <button type="button" id="debug2">Debug 2</button>
