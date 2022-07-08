@@ -2,38 +2,53 @@
 
 A bit complex, isn't it?
 
-Documentation is almost always out of date and unreliable, which is why this document exists. This *should* provide the reader with a more reliable way of getting Cordova set up to build and run android (and soon iOS) apps.
+Documentation is almost always out of date and unreliable, which is why this page was created. If you run these commands on a brand new Linux machine, it all should just work.
 
-(This guide)[https://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html#requirements-and-support] is quite appropriate to follow up to the *Project Configuration* section.
+```
+npm install -g cordova
+sudo apt install openjdk-11-jdk openjdk-11-jdk-headless gradle
+# https://developer.android.com/studio -> command line tools only
+cat << EOF >> ~/.bashrc
+export ANDROID_HOME="\$HOME/Code/etc/android"
+export ANDROID_SDK_ROOT="\$ANDROID_HOME"
+export PATH="\$PATH:\$ANDROID_HOME/cmdline-tools/tools/bin"
+export PATH="\$PATH:\$ANDROID_HOME/platform-tools"
+export PATH="\$PATH:\$ANDROID_HOME/emulator"
+EOF
 
-After completing that part of the guide, you will need to install android pakages. Full setup has been completed on Linux with only the following SDK-related packes installed:
-- build-tools 30.0.3
-- platform 29
-- platform 30
-- platform 31
+sdkmanager --list
+sdkmanager "build-tools;30.0.3" "platform-tools" "platforms;android-30" "system-images;android-30;default;x86_64"
 
-ANDROID_HOME and ANDROID_SDK_ROOT were set to the same location, as there was no `.../Android/Sdk` folder on the Linux install.
+sudo apt install android-sdk-platform-tools-common
+sudo usermod -aG plugdev $LOGNAME
 
-On Windows, `ANDROID_SDK_ROOT` was set to `C:\Users\[username]\AppData\Local\Android\Sdk` which is the default install location. No `ANDROID_HOME` was set. The following SDK-related packages were installed:
-- build-tools;28.0.3
-- build-tools;29.0.3
-- build-tools;30.0.0
-- build-tools;30.0.3
-- build-tools;33.0.0
-- platform-tools (version 33.0.2)
-- platforms;android-28
-- platforms;android-29
-- platforms;android-30
-- platforms;android-32
-- sources;android-29
-- system-images;android-29google_apis;x86
+# REBOOT, then you're ready!
 
-You may not need all of these, you may only need two specific packages - one from `build-tools` and one from `platforms`, but the Linux list is a better indication of what you need installed.
+# Plug in physical Android device, then:
+adb devices
+adb uninstall "com.yourpackage"
+cordova run android
 
-TODO: remove suspected unnecessary packages from the windows platform and stop when it doesn't work. Identify from the big windows list what is *actually* needed.
+# For emulation, make sure you have virtualisation enabled in BIOS, then...
+avdmanager create avd --name android30 --package "system-images;android-30;default;x86_64"
+emulator @android30
+cordova run --emulator android
+```
+This sorts out android. iOS hasn't quite been sorted out yet.
 
-You should then be able to run `cordova add android`, `cordova build android`, and then `cordova run android`. You will need an android device connected with debugging authorisation in order to use the `run` command, or you can set up an emulator with Android Studio. Getting an emulator set up with Android Studio is not complicated and there are many thorough guides for it. Make sure the emulator is running and then us `cordova run android --emulator` to use it.
+## Localhost compatability
+Once you have a local server, you'll need to adjust the android app a bit in order for it correctly `iframe` the localhost site. There are some permission errors when loading cross-origin sites in iframes, and here's how to fix them for localhost.
 
-There may be some permission errors on Linux. Error codes are fairly self-descriptive but searching for the `plugdev` and the `udev` keywords should yeild some answers. You may need to log out/reboot.
+In `.../shell/platforms/android/app/src/main/res/xml`, add a new file called `network_security_config.xml`. The contents of that should be as follows:
+```
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+    </domain-config>
+</network-security-config>
+```
+**Note:** replace `localhost` with whatever the site name may be. It is possible that, come deploymnet, this should be replaced with the deployment URL.
 
-At this point, your app should be showing on your android device.
+And then, in `...shell/platforms/android/app/src/main/AndroidManifest.xml`, add the following to the `<application...` attribute:
+`...android:networkSecurityConfig="@xml/network_security_config">`.
