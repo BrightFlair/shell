@@ -15,6 +15,7 @@
   "devDependencies": {
     "@moodlehq/cordova-plugin-local-notification": "^0.9.0-moodle.3",
     "cordova-android": "^10.1.2",
+    "cordova-background-geolocation-plugin": "^2.0.4",
     "cordova-electron": "^3.1.0",
     "cordova-plugin-android-permissions": "^1.1.3",
     "cordova-plugin-badge": "^0.8.8",
@@ -35,6 +36,15 @@
       "cordova-plugin-android-permissions": {},
       "cordova-plugin-geolocation": {
         "GPS_REQUIRED": "true"
+      },
+      "cordova-background-geolocation-plugin": {
+        "GOOGLE_PLAY_SERVICES_VERSION": "11+",
+        "ICON": "@mipmap/ic_launcher",
+        "SMALL_ICON": "@mipmap/ic_launcher",
+        "ACCOUNT_NAME": "@string/app_name",
+        "ACCOUNT_LABEL": "@string/app_name",
+        "ACCOUNT_TYPE": "$PACKAGE_NAME.account",
+        "CONTENT_AUTHORITY": "$PACKAGE_NAME"
       }
     }
   }
