@@ -2,11 +2,20 @@
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 document.addEventListener('deviceready', onDeviceReady, false);
 
+let bgLocationServices;
+
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!
 
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
-    navigator.geolocation.watchPosition(checkPos);
+    //navigator.geolocation.watchPosition(checkPos);
+
+    // window.geofence is now available
+    window.geofence.initialize().then(function () {
+        console.log("Successful initialization");
+    }, function (error) {
+        console.log("Error", error);
+    });
 
 }
 
@@ -47,21 +56,28 @@ function setRoundHouse(areWeThere) {
     }
 }
 
+function checkLocations(pos) {
+    const crd = pos.coords;
 
-document.getElementById("debug1").addEventListener("click", function() {
-    navigator.geolocation.getCurrentPosition(PositionSuccess, PositionError, {timeout: 5000});
-});
+    // we may have a long list of registered location triggers, each of a different type.
+    // For now, let's assume there is a single registered location trigger (they only have one concert that day)
+    var boundaries = globalThis.data.payload.boundaries;
+    const length = Object.keys(boundaries).length;
 
-function PositionSuccess(position) {
-    console.log(position);
+    let distance;
+    for (var i = 0; i < length; i++) {
+        // check geofence
+        var trigger = boundaries[i];
+        distance = getEuclidDistance(crd, trigger);
+        if (distance < trigger.radius) {
+            cordova.plugins.notification.local.schedule({
+                title: globalThis.data.payload.title,
+                text: globalThis.data.payload.subtitle,
+                foreground: true
+            });
+        }
+    }
 }
-
-function PositionError(error) {
-    console.log(error);
-}
-
-// var permissions = cordova.plugins.permissions;
-// permissions.requestPermission(permissions.ACCESS_FINE_LOCATION);
 
 
 // Listen to message from child window
@@ -75,8 +91,6 @@ window.addEventListener('message', e => {
         return;
     }
 
-    console.log(key);
-    console.log(data);
     if (data.type == "notification") {
         if (data.subtype == "now") {
             cordova.plugins.notification.local.schedule({
@@ -85,15 +99,10 @@ window.addEventListener('message', e => {
                 foreground: true
             });
         } else if (data.subtype == "geofence") {
-            cordova.plugins.notification.local.schedule({
-                title: data.title,
-                trigger: {
-                    type: 'location',
-                    center: [data.lat, data.long],
-                    radius: data.radius,
-                    notifyOnEntry: true
-                }
-            });
+            globalThis.data = data;
+            // when location updates
+                // location check
+                    // notification
         } else if (data.subtype == "timed") {
             cordova.plugins.notification.local.schedule({
                 title: data.payload.title,
@@ -112,7 +121,6 @@ window.addEventListener('message', e => {
             navigator.geolocation.getCurrentPosition(PositionSuccess, PositionError, {timeout: 5000});
         }
     }
-
 });
 
 
