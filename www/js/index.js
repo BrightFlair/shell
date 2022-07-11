@@ -1,4 +1,5 @@
 // Wait for the deviceready event before using any of Cordova's device APIs.
+
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 document.addEventListener('deviceready', onDeviceReady, false);
 
@@ -10,14 +11,39 @@ function onDeviceReady() {
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
     //navigator.geolocation.watchPosition(checkPos);
 
-    // window.geofence is now available
-    window.geofence.initialize().then(function () {
-        console.log("Successful initialization");
-    }, function (error) {
-        console.log("Error", error);
+    BackgroundGeolocation.configure({
+        HighAccuracy: 1,
+        DistanceFilter: 1,
+        mockLocationsEnabled: true,
+        NotificationTitle: "Background tracking",
+        NotificationText: "enabled",
+        debug: true,
+        url: "http://localhost/notification.html",
+        postTemplate: {
+            lat: '@latitude',
+            long: '@longitude',
+        }
+
+    });
+
+    BackgroundGeolocation.start();
+
+    BackgroundGeolocation.on('location', function(location) {
+        console.log(location);
+        // handle your locations here
+        // to perform long running operation on iOS
+        // you need to create background task
+        //BackgroundGeolocation.startTask(function(taskKey) {
+          // execute long running task
+          // eg. ajax post location
+          // IMPORTANT: task has to be ended by endTask
+          //BackgroundGeolocation.endTask(taskKey);
+        //});
     });
 
 }
+
+
 
 function checkPos(pos) {
     const crd = pos.coords;
