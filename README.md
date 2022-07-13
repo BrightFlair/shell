@@ -52,3 +52,49 @@ In `.../shell/platforms/android/app/src/main/res/xml`, add a new file called `ne
 
 And then, in `...shell/platforms/android/app/src/main/AndroidManifest.xml`, add the following to the `<application...` attribute:
 `...android:networkSecurityConfig="@xml/network_security_config">`.
+
+# Notifications and Geolocation
+Notifications communicate from iframe to parents through `.postMessage()` functionality. Take the following code that might be hosted within the `iframe`-d site:
+```
+document.getElementById("geofence").addEventListener("click", function() {
+	var data = {
+		"type": "notification",
+		"subtype": "geofence",
+		"payload": {
+			"title": "You have arrived",
+			"subtitle": "Welcome! Click on me to see where to queue and where facilities are located.",
+			"boundaries": {
+				0: {
+					"latitude": 52.92163108039056,
+					"longitude": -1.4767838875066355,
+					"radius": 0.001, // around 40-50 metres
+				},
+			}
+		},
+	}
+	parent.postMessage(data, "*");
+});
+```
+This message is seen by the parent with an event listener, listening for the "message" event. The below is a piece of code hosted in the `parent` window that can "hear" this message and deal with the notification accordingly:
+```
+window.addEventListener('message', e => {
+    var key = e.message ? "message" : "data"; // find out if posteMessage is message or data
+    var data = e[key];
+    var origin = e.origin;
+
+    // Need to assess origin rule out cross-site scripting attacks
+    if (origin !== [expected origin point])  {
+        return;
+    }
+
+    // what to do with different message types
+    if (data.type == "notification") {
+        if (data.subtype == "geofence") { // create a notification to be triggered when the user enters a physical area
+            // [geofence notification code goes here]
+        }
+    }
+});
+```
+This back and forth is required as JavaScript data cannot be passed directly from frame to parent. The parent (Cordova in this case) is the only place that can create device notifications, so it would not be appropriate to try and create these from the `iframe`-d window.
+
+This structure can support multiple types of notification and more general data transfer. The reader can see more examples of how this structure is used in the [www/js/index.js](hhttps://github.com/BrightFlair/shell/www/js/index.js) file.
