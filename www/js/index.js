@@ -88,6 +88,7 @@ function checkLocations(position) {
                 text: globalThis.data.payload.subtitle,
                 foreground: true
             });
+            break;
         }
     }
 }
@@ -108,8 +109,8 @@ window.addEventListener('message', e => {
     if (data.type == "notification") {
         if (data.subtype == "now") { // Create a notification right now
             cordova.plugins.notification.local.schedule({
-                title: data.title,
-                text: data.subtitle,
+                title: data.payload.title,
+                text: data.payload.subtitle,
                 foreground: true
             });
         } else if (data.subtype == "geofence") { // create a notification to be triggered when the user enters a physical area
