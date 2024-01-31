@@ -12,17 +12,45 @@ window.location.pathname === "/" && (function() {
 	const latEl = form["latitude"];
 	const lonEl = form["longitude"];
 	const accuracyEl = form["accuracy"];
+	let mapContainer = document.getElementById("map");
 	let map = null;
 	let lastKnownPosition = null;
 	let view = null;
 	let positionFeature = null;
 	let accuracyFeature = null;
 	let pinFeature = null;
+	const parser = new DOMParser();
 
-	document.querySelector("#send-notification").addEventListener("click", clickNotificationButton)
-	document.querySelector("#start-gps").addEventListener("click", clickGpsButton)
+	document.querySelector("#send-notification").addEventListener("click", clickNotificationButton);
+	document.querySelector("#start-gps").addEventListener("click", clickGpsButton);
+	document.querySelector("[name=do][value=check]").addEventListener("click", clickCheckButton);
 
 	document.querySelector("#start-gps").click();
+
+	if(mapContainer.dataset.pin) {
+		setTimeout(checkFence, 1000);
+	}
+
+	function checkFence() {
+		let formData = new FormData(form);
+		formData.set("do", "check");
+		let url = new URL(location);
+		url.pathname = "/check/";
+		url.search = (new URLSearchParams(formData)).toString();
+		fetch(url, {
+			credentials: "same-origin"
+		}).then(response => response.text())
+		.then(html => {
+			let newDocument = parser.parseFromString(html, "text/html");
+			let message = newDocument.querySelector("output").textContent;
+			if(message.includes("NOT")) {
+				sendNotification(message);
+			}
+			else {
+				setTimeout(checkFence, 1000);
+			}
+		});
+	}
 
 	function clickNotificationButton(e) {
 		e.preventDefault();
@@ -43,10 +71,29 @@ window.location.pathname === "/" && (function() {
 		getPosition();
 	}
 
-	function sendNotification() {
+	function clickCheckButton(e) {
+		e.preventDefault();
+		let url = new URL(location);
+		url.pathname = "/check/";
+		let formData = new FormData(form);
+		formData.set("do", "check");
+		url.search = (new URLSearchParams(formData)).toString();
+		fetch(url, {
+			credentials: "same-origin"
+		}).then(response => response.text()).then(html => {
+			let newDocument = parser.parseFromString(html, "text/html");
+			let outputEl = newDocument.querySelector("output");
+			alert(outputEl.innerText);
+		})
+	}
+
+	function sendNotification(message = null) {
 		let lat = latEl.value;
 		let lon = lonEl.value;
-		new Notification(`Your location is: ${lat} : ${lon}`);
+		if(!message) {
+			message = `Your location is: ${lat} : ${lon}`;
+		}
+		new Notification(message);
 	}
 
 	function getPosition() {
@@ -88,7 +135,6 @@ window.location.pathname === "/" && (function() {
 			maxZoom: 17
 		});
 
-		let mapContainer = document.getElementById("map");
 		mapContainer.innerHTML = "";
 
 		map = new Map({
@@ -147,5 +193,27 @@ window.location.pathname === "/" && (function() {
 		});
 		console.log(features);
 		map.addLayer(vectorLayer);
+	}
+})();
+
+window.location.pathname === "/check/" && (function() {
+	document.getElementById("load-location").addEventListener("click", clickLoadLocationButton);
+
+	function clickLoadLocationButton(e) {
+		e.preventDefault();
+		let options = {
+			maximumAge: 1000,
+			enableHighAccuracy: true,
+		};
+
+		navigator.geolocation.getCurrentPosition(updatePosition, error => {
+			console.log("Error getting position:", error);
+		}, options);
+	}
+
+	function updatePosition(position) {
+		let form = document.forms[0];
+		form["latitude"].value = position.coords.latitude;
+		form["longitude"].value = position.coords.longitude;
 	}
 })();
