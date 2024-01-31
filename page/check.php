@@ -7,7 +7,6 @@ use Gt\Session\Session;
 function do_check(Document $document, Session $session, Input $input):void {
 	$fenceLatLon = $session->get("latLon");
 
-	$within = true;
 	if($fenceLatLon) {
 		$checkLatLon = [
 			"lat" => $input->getString("latitude"),
@@ -15,17 +14,17 @@ function do_check(Document $document, Session $session, Input $input):void {
 		];
 
 		$calc = new DistanceCalculator();
-		if($calc->getDistance($fenceLatLon, $checkLatLon) > 200) {
-			$within = false;
-		}
+		$distance = $calc->getDistance($fenceLatLon, $checkLatLon);
 	}
 	else {
-		$within = false;
+		$distance = 100_000;
 	}
 
+	$distance = number_format($distance);
+
 	$document->querySelector("form")->remove();
-	$document->querySelector("output")->textContent = $within
-		? "You are within the fence"
-		: "You are NOT within a fence";
+	$document->querySelector("output")->textContent = $distance <= 100
+		? "You are within the fence ($distance m)"
+		: "You are NOT within a fence ($distance m)";
 	$document->querySelector("main>p")->textContent = $session->getId();
 }

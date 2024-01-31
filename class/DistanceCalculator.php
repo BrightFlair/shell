@@ -8,7 +8,6 @@ class DistanceCalculator {
 			+ cos(deg2rad($latLonA['lat'])) * cos(deg2rad($latLonB['lat'])) * cos(deg2rad($theta));
 		$dist = acos($dist);
 		$dist = rad2deg($dist);
-		return $dist * 111325;
+		return $dist * 90_000;
 	}
-
 }
