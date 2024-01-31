@@ -1,0 +1,6 @@
+{
+	"name": "brightflair/shell",
+	"require": {
+		"phpgt/webengine": "dev-master"
+	}
+}

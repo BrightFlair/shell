@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@babel/cli": "^7.19.3",
+    "@babel/core": "^7.20.2",
+    "@babel/preset-env": "^7.20.2",
+    "babel": "^6.23.0",
+    "babel-loader": "^9.1.0",
+    "esbuild": "0.17.12",
+    "ol": "^8.2.0"
+  }
+}

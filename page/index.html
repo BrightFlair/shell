@@ -1,0 +1,32 @@
+<main>
+	<h1>Shell Test!</h1>
+	<p data-bind:text="userId">ID</p>
+
+	<button id="send-notification">Send notification</button>
+
+	<div id="map" data-bind:data-pin="pinLonLat">
+		<button id="start-gps">Start GPS</button>
+	</div>
+
+	<form id="detail">
+		<div id="location">
+			<label>
+				<span>Latitude</span>
+				<input name="latitude" readonly />
+			</label>
+			<label>
+				<span>Longitude</span>
+				<input name="longitude" readonly />
+			</label>
+			<label>
+				<span>Accuracy</span>
+				<input name="accuracy" readonly />
+			</label>
+		</div>
+
+		<div id="buttons">
+			<button name="do" value="set-pin">Set fence</button>
+			<button name="do" value="clear-pin">Clear fence</button>
+		</div>
+	</form>
+</main>
