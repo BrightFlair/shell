@@ -85,7 +85,7 @@ window.location.pathname === "/" && (function() {
 		view = new View({
 			center: [lastKnownPosition.coords.latitude, lastKnownPosition.coords.longitude],
 			zoom: 2,
-			maxZoom: 18
+			maxZoom: 17
 		});
 
 		let mapContainer = document.getElementById("map");
@@ -137,7 +137,7 @@ window.location.pathname === "/" && (function() {
 				})
 			);
 			let coords = mapContainer.dataset.pin.split(":").map(Number);
-			pinFeature.setGeometry(new Circle(coords, 100 / (111325)));
+			pinFeature.setGeometry(new Circle(coords, 200 / (111325)));
 		}
 
 		let vectorLayer = new VectorLayer({
